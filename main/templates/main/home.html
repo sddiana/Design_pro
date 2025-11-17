@@ -1,0 +1,36 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Design.pro - Студия дизайна интерьеров</h1>
+
+<div>
+    {% if user.is_authenticated %}
+        <div class="alert alert-success">
+            <h3>{{ user.username }}</h3>
+            <p><strong>Ваш статус:</strong> {{ user_type }}</p>
+        </div>
+        
+        {% if user.is_superuser %}
+        <div class="alert alert-warning">
+            <h4>Панель администратора</h4>
+            <a href="/admin/" class="btn btn-primary">Админ-панель</a>
+        </div>
+        {% elif user.is_staff %}
+        <div class="alert alert-info">
+            <h4>Панель персонала</h4>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <h4>Личный кабинет</h4>
+        </div>
+        {% endif %}
+        
+    {% else %}
+        <div class="alert alert-info">
+            <h3>Вы находитесь в режиме гостя</h3>
+            <a href="{% url 'login' %}" class="btn btn-primary">Войти</a>
+            <a href="{% url 'register' %}" class="btn btn-success">Зарегистрироваться</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
