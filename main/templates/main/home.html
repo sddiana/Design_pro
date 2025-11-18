@@ -28,8 +28,8 @@
     {% else %}
         <div class="alert alert-info">
             <h3>Вы находитесь в режиме гостя</h3>
-            <a href="{% url 'login' %}" class="btn btn-primary">Войти</a>
-            <a href="{% url 'register' %}" class="btn btn-success">Зарегистрироваться</a>
+            <a href="{% url 'users:login' %}" class="btn btn-primary">Войти</a>
+            <a href="{% url 'users:register' %}" class="btn btn-success">Зарегистрироваться</a>
         </div>
     {% endif %}
 </div>

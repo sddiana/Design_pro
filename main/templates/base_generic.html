@@ -19,26 +19,25 @@
         <div class="col-sm-2">
           {% block sidebar %}
             <ul class="sidebar-nav">
-              <li><a href="{% url 'home' %}">Главная</a></li>
-              {% if user.is_authenticated %}
-                <li><a href="{% url 'profile' %}">Профиль</a></li>
-              {% endif %}
+              <li><a href="{% url 'main:home' %}">Главная</a></li>
             </ul>
-            
+            <ul class="sidebar-nav">
+              <li><a href="{% url 'main:profile' %}">Профиль</a></li>
+            </ul>
+
             {% if user.is_authenticated %}
             <ul class="sidebar-nav">
               <li>Вы вошли как: {{ user.username }}</li>
-              <form method="post" action="{% url 'logout' %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-link" style="padding:0; border:0; color:#337ab7;">Выйти</button>
-                </form>
+              <ul class="sidebar-nav">
+               <li><a href="{% url 'users:logout' %}">Выйти</a></li>
+            </ul>
             </ul>
             {% else %}
             <ul class="sidebar-nav">
-              <li><a href="{% url 'login' %}">Войти</a></li>
+              <li><a href="{% url 'users:login' %}">Войти</a></li>
             </ul>
             <ul class="sidebar-nav">
-              <li><a href="{% url 'register' %}">Регистрация</a></li>
+            <li><a href="{% url 'users:register' %}">Регистрация</a></li>
             </ul>
             {% endif %}
           {% endblock %}
