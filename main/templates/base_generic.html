@@ -24,6 +24,9 @@
             <ul class="sidebar-nav">
               <li><a href="{% url 'main:profile' %}">Профиль</a></li>
             </ul>
+            <ul class="sidebar-nav">
+              <li><a href="{% url 'main:create_application' %}">Создать заявку</a></li>
+            </ul>
 
             {% if user.is_authenticated %}
             <ul class="sidebar-nav">
