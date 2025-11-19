@@ -28,7 +28,8 @@
             {% if user.is_authenticated %}
             <ul class="sidebar-nav">
               <li>Вы вошли как: {{ user.username }}</li>
-              <ul class="sidebar-nav">
+            </ul>
+            <ul class="sidebar-nav">
                <li><a href="{% url 'users:logout' %}">Выйти</a></li>
             </ul>
             </ul>

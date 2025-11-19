@@ -6,8 +6,6 @@ def home(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
             user_type = "Администратор"
-        elif request.user.is_staff:
-            user_type = "Персонал"
         else:
             user_type = "Пользователь"
     
