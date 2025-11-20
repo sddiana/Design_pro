@@ -10,4 +10,4 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ['name', 'client', 'category', 'status', 'created_at']
     list_filter = ['status', 'category', 'created_at']
     search_fields = ['name', 'client__username', 'description']
-    readonly_fields = ['created_at', 'status']
+    readonly_fields = ['created_at',]

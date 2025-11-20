@@ -92,3 +92,15 @@ def save(self, *args, **kwargs):
             self.status = 'new'
         self.full_clean()
         super().save(*args, **kwargs)
+
+def can_change_status(self, user):
+    return user.is_superuser
+    
+def get_available_statuses(self):
+    if self.status == 'new':
+        return ['in_progress', 'canceled']
+    elif self.status == 'in_progress':
+        return ['completed', 'canceled']
+    elif self.status == 'completed':
+        return ['in_progress']
+    return []

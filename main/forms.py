@@ -27,3 +27,20 @@ class ApplicationForm(forms.ModelForm):
         help_texts = {
             'floor_plan': 'Форматы: JPG, JPEG, PNG, BMP. Максимальный размер: 2MB'
         }
+
+class ApplicationStatusForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ['status']
+        widgets = {
+            'status': forms.Select()
+        }
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'description']
+        widgets = {
+            'name': forms.TextInput(),
+            'description': forms.Textarea()
+        }

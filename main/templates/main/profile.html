@@ -1,65 +1,101 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<h1>Мои заявки</h1>
+<class="container">
+    <h1>Личный кабинет</h1>
 
-<form method="get" class="mb-4">
-    <select name="status" class="form-control" style="width: auto; display: inline-block;">
-        <option value="">Все заявки</option>
-        <option value="new" {% if request.GET.status == 'new' %}selected{% endif %}>Новая</option>
-        <option value="in_progress" {% if request.GET.status == 'in_progress' %}selected{% endif %}>Принято в работу</option>
-        <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Выполнено</option>
-    </select>
-    <button type="submit" class="btn btn-primary">Применить</button>
-    {% if request.GET.status %}
-        <a href="{% url 'main:profile' %}" class="btn btn-secondary">Сбросить</a>
-    {% endif %}
-</form>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Информация о пользователе</h3>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email|default:"Не указан" }}</p>
+                    
+                    {% if user.is_superuser %}
+                        <p><strong>Статус:</strong> <span class="label label-danger">Администратор</span></p>
+                    {% else %}
+                        <p><strong>Статус:</strong> <span class="label label-info">Пользователь</span></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="mb-3">
-    <a href="{% url 'main:create_application' %}" class="btn btn-success">
-        Создать новую заявку
-    </a>
-</div>
+    <h2>Мои заявки</h2>
 
-{% if applications %}
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Временная метка</th>
-            <th>Название заявки</th>
-            <th>Описание заявки</th>
-            <th>Категория заявки</th>
-            <th>Статус заявки</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for application in applications %}
-        <tr>
-            <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
-            <td>{{ application.name }}</td>
-            <td>{{ application.description }}</td>
-            <td>{{ application.category.name }}</td>
-            <td>
-                {% if application.status == 'new' %}
-                    <span class="badge bg-primary">Новая</span>
-                {% elif application.status == 'in_progress' %}
-                    <span class="badge bg-warning">Принято в работу</span>
-                {% elif application.status == 'completed' %}
-                    <span class="badge bg-success">Выполнено</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="alert alert-info">
-    {% if request.GET.status %}
-        Заявок с выбранным статусом не найдено
+    <div style="margin-bottom: 20px;">
+        <form method="get">
+            <label>Статус: </label>
+            <select name="status" class="form-control" style="display: inline-block; width: auto;">
+                <option value="">Все заявки</option>
+                <option value="new" {% if request.GET.status == 'new' %}selected{% endif %}>Новая</option>
+                <option value="in_progress" {% if request.GET.status == 'in_progress' %}selected{% endif %}>Принято в работу</option>
+                <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Выполнено</option>
+            </select>
+            <button type="submit" class="btn btn-primary" style="margin-left: 10px;">Применить</button>
+            {% if request.GET.status %}
+                <a href="{% url 'main:profile' %}" class="btn btn-default" style="margin-left: 10px;">Сбросить</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'main:create_application' %}" class="btn btn-success">
+            Создать новую заявку
+        </a>
+    </div>
+
+    {% if applications %}
+    <table class="table table-bordered" style="width: 100%; table-layout: fixed;">
+        <thead>
+            <tr>
+                <th>Временная метка</th>
+                <th>Название заявки</th>
+                <th>Описание заявки</th>
+                <th>Категория заявки</th>
+                <th>Статус заявки</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                <td>
+                <a href="{% url 'main:application_detail' application.id %}" class="text-decoration-none">
+                    {{ application.name }}
+                </a>
+                </td>
+                <td class="description-cell">
+                    <div class="description-content">
+                        {{ application.description|truncatewords:20 }}
+                    </div>
+                </td>
+                <td>{{ application.category.name }}</td>
+                <td>
+                    {% if application.status == 'new' %}
+                        <span class="label label-primary">Новая</span>
+                    {% elif application.status == 'in_progress' %}
+                        <span class="label label-warning">Принято в работу</span>
+                    {% elif application.status == 'completed' %}
+                        <span class="label label-success">Выполнено</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% else %}
-        У вас пока нет заявок
+    <div class="alert alert-info">
+        {% if request.GET.status %}
+            Заявок с выбранным статусом не найдено
+        {% else %}
+            У вас пока нет заявок
+        {% endif %}
+    </div>
     {% endif %}
 </div>
-{% endif %}
+
 {% endblock %}

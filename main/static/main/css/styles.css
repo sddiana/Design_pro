@@ -1,8 +1,24 @@
-.sidebar-nav {
+.nav-bar {
   margin-top: 20px;
   padding: 0;
-  list-style: none;
 }
+
+.description-cell {
+    max-width: 250px;
+    overflow: hidden;
+}
+.description-content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.description-content:hover {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+}
+
+
 
 
 

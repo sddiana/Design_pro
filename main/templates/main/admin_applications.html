@@ -1,0 +1,82 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>Управление заявками</h1>
+
+    <div style="margin-bottom: 20px;">
+        <form method="get">
+            <label>Статус: </label>
+            <select name="status" class="form-control" style="display: inline-block; width: auto;">
+                <option value="">Все заявки</option>
+                <option value="new" {% if request.GET.status == 'new' %}selected{% endif %}>Новая</option>
+                <option value="in_progress" {% if request.GET.status == 'in_progress' %}selected{% endif %}>Принято в работу</option>
+                <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Выполнено</option>
+            </select>
+            <button type="submit" class="btn btn-primary" style="margin-left: 10px;">Применить</button>
+            {% if request.GET.status %}
+                <a href="{% url 'main:admin_applications' %}" class="btn btn-default" style="margin-left: 10px;">Сбросить</a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if applications %}
+    <table class="table table-bordered" style="width: 100%; table-layout: fixed;">
+        <thead>
+            <tr>
+                <th style="width: 140px;">Временная метка</th>
+                <th style="width: 150px;">Название заявки</th>
+                <th style="width: 200px;">Описание заявки</th>
+                <th style="width: 120px;">Категория</th>
+                <th style="width: 150px;">Клиент</th>
+                <th style="width: 200px;">Статус заявки</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                <td>
+                    <a href="{% url 'main:application_detail' application.id %}" class="text-decoration-none">
+                        {{ application.name }}
+                    </a>
+                </td>
+                <td class="description-cell">
+                    <div class="description-content">
+                        {{ application.description|truncatewords:15 }}
+                    </div>
+                </td>
+                <td>{{ application.category.name }}</td>
+                <td>{{ application.client.username }}</td>
+                <td>
+                    <form method="post" action="{% url 'main:change_status' application.id %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <select name="status" class="form-control input-sm" onchange="this.form.submit()" style="display: inline-block; width: auto;">
+                            <option value="new" {% if application.status == 'new' %}selected{% endif %}>Новая</option>
+                            <option value="in_progress" {% if application.status == 'in_progress' %}selected{% endif %}>Принято в работу</option>
+                            <option value="completed" {% if application.status == 'completed' %}selected{% endif %}>Выполнено</option>
+                        </select>
+                    </form>
+                    <small class="text-muted">
+                        {% if application.status == 'new' %}Новая
+                        {% elif application.status == 'in_progress' %}Принято в работу
+                        {% elif application.status == 'completed' %}Выполнено
+                        {% endif %}
+                    </small>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">
+        {% if request.GET.status %}
+            Заявок с выбранным статусом не найдено
+        {% else %}
+            Заявок нет
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

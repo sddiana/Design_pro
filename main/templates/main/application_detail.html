@@ -1,65 +1,52 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<h1>Мои заявки</h1>
-
-<form method="get" class="mb-4">
-    <select name="status" class="form-control" style="width: auto; display: inline-block;">
-        <option value="">Все заявки</option>
-        <option value="new" {% if request.GET.status == 'new' %}selected{% endif %}>Новая</option>
-        <option value="in_progress" {% if request.GET.status == 'in_progress' %}selected{% endif %}>Принято в работу</option>
-        <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Выполнено</option>
-    </select>
-    <button type="submit" class="btn btn-primary">Применить</button>
-    {% if request.GET.status %}
-        <a href="{% url 'main:profile' %}" class="btn btn-secondary">Сбросить</a>
-    {% endif %}
-</form>
-
-<div class="mb-3">
-    <a href="{% url 'main:create_application' %}" class="btn btn-success">
-        Создать новую заявку
-    </a>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2>{{ application.name }}</h2>
+                    <span class="label 
+                        {% if application.status == 'new' %}label-primary
+                        {% elif application.status == 'in_progress' %}label-warning
+                        {% elif application.status == 'completed' %}label-success
+                        {% else %}label-default{% endif %}">
+                        {{ application.get_status_display }}
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Описание:</strong></p>
+                    <p>{{ application.description|linebreaks }}</p>
+                    
+                    <p><strong>Категория:</strong> {{ application.category.name }}</p>
+                    <p><strong>Дата создания:</strong> {{ application.created_at|date:"d.m.Y H:i" }}</p>
+                    
+                    
+                    <div class="text-center">
+                        <h4>План помещения</h4>
+                        {% if application.floor_plan %}
+                            <img src="{{ application.floor_plan.url }}" 
+                                 alt="План помещения" 
+                                 class="img-thumbnail"
+                                 style="max-width: 100%; max-height: 400px;">
+                            <br><br>
+                            <a href="{{ application.floor_plan.url }}" 
+                               target="_blank" 
+                               class="btn btn-default">
+                                Открыть в полном размере
+                            </a>
+                        {% else %}
+                            <p class="text-muted">План помещения не загружен</p>
+                        {% endif %}
+                    </div>
+                
+                </div>
+                <div style="margin-top: 20px;">
+                    <a href="{% url 'main:profile' %}" class="btn btn-default">← Назад к списку</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-{% if applications %}
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Временная метка</th>
-            <th>Название заявки</th>
-            <th>Описание заявки</th>
-            <th>Категория заявки</th>
-            <th>Статус заявки</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for application in applications %}
-        <tr>
-            <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
-            <td>{{ application.name }}</td>
-            <td>{{ application.description }}</td>
-            <td>{{ application.category.name }}</td>
-            <td>
-                {% if application.status == 'new' %}
-                    <span class="badge bg-primary">Новая</span>
-                {% elif application.status == 'in_progress' %}
-                    <span class="badge bg-warning">Принято в работу</span>
-                {% elif application.status == 'completed' %}
-                    <span class="badge bg-success">Выполнено</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="alert alert-info">
-    {% if request.GET.status %}
-        Заявок с выбранным статусом не найдено
-    {% else %}
-        У вас пока нет заявок
-    {% endif %}
-</div>
-{% endif %}
 {% endblock %}
