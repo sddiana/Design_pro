@@ -77,8 +77,16 @@ class Application(models.Model):
         auto_now_add=True,
         verbose_name='Дата создания'
     )
-    comment = models.TextField(blank=True, null=True, verbose_name='Комментарий')
-    design_image = models.ImageField(upload_to='designs/', blank=True, null=True, verbose_name='Изображение дизайна')
+    comment = models.TextField(
+        blank=True, null=True,
+        verbose_name='Комментарий'
+    )
+
+    design_image = models.ImageField(
+        upload_to='designs/',
+        blank=True, null=True,
+        verbose_name='Изображение дизайна'
+    )
     
    
     class Meta:

@@ -17,7 +17,19 @@ def home(request):
     context = {
         'user_type': user_type
     }
-    return render(request, 'main/home.html', context)
+
+    completed_applications = Application.objects.filter(
+        status='completed'
+    ).order_by('-created_at')[:4]
+
+    in_progress_count = Application.objects.filter(
+        status='in_progress'
+    ).count()
+
+    return render(request, 'main/home.html', {
+        'completed_applications': completed_applications,
+        'in_progress_count': in_progress_count 
+    })
 
 @login_required
 def profile(request):
@@ -151,8 +163,9 @@ def update_application(request, application_id):
         comment = request.POST.get('comment', '').strip()
         design_image = request.FILES.get('design_image')
 
+
         if application.status in ['in_progress', 'completed']:
-            return redirect('main:application_detail', application_id=application_id)
+            messages.error(request, 'Нельзя изменить статус у заявки в работе или выполненной')
         
         if new_status in [choice[0] for choice in Application.STATUS_CHOICES]:
             
@@ -165,11 +178,15 @@ def update_application(request, application_id):
             application.status = new_status
             if comment:
                 application.comment = comment
+
             if design_image:
                 allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp']
+
             if design_image.content_type not in allowed_types:
-                design_image = None
-            max_size = 5 * 1024 * 1024  # 5MB в байтах
+                return redirect('main:application_detail', application_id=application_id)
+
+            max_size = 5 * 1024 * 1024
+
             if design_image.size > max_size:
                 design_image = None
     

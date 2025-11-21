@@ -5,22 +5,18 @@
 
 <div>
     {% if user.is_authenticated %}
-        <div class="alert alert-success">
+        <div class="alert">
             <h3>{{ user.username }}</h3>
             <p><strong>Ваш статус:</strong> {{ user_type }}</p>
         </div>
         
         {% if user.is_superuser %}
-        <div class="alert alert-warning">
+        <div class="alert">
             <h4>Панель администратора</h4>
             <a href="/admin/" class="btn btn-primary">Админ-панель</a>
         </div>
-        {% elif user.is_staff %}
-        <div class="alert alert-info">
-            <h4>Панель персонала</h4>
-        </div>
         {% else %}
-        <div class="alert alert-info">
+        <div class="alert">
             <h4>Личный кабинет</h4>
         </div>
         {% endif %}
@@ -32,5 +28,44 @@
             <a href="{% url 'users:register' %}" class="btn btn-success">Зарегистрироваться</a>
         </div>
     {% endif %}
+
+    <div class="counter alert">
+        Заявок в работе: {{ in_progress_count }}
+    </div>
+   
+    <div class="gallery">
+    <div class="row">
+        {% for application in completed_applications %}
+        <div class="col-xs-6 col-md-3" > 
+            <div class="thumbnail text-center" style="padding: 20px 10px 0px 10px;">  
+                
+              <div class="image-container" style="height: 200px; overflow: hidden;">
+                    {% if application.design_image and application.design_image.name %}
+                        <img src="{{ application.design_image.url }}" 
+                             alt="Дизайн: {{ application.name }}"
+                             class="img-responsive"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <div class="no-image" style="width: 100%; height: 100%; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                            <span class="text-muted">Дизайн не загружен</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="caption">
+                    <h4 style="margin-top: 15px; font-size: 16px;">{{ application.name }}</h4>
+                    <p style="margin-bottom: 5px;">
+                        <small class="text-muted">
+                            Категория: {{ application.category.name }}<br>
+                            Дата: {{ application.created_at|date:"d.m.Y" }}
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
 </div>
 {% endblock %}
