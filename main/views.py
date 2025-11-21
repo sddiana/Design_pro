@@ -142,3 +142,32 @@ def delete_application(request, application_id):
     
     return redirect('main:application_detail')
 
+@admin_required
+def update_application(request, application_id):
+    application = get_object_or_404(Application, id=application_id)
+    
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        comment = request.POST.get('comment', '').strip()
+        design_image = request.FILES.get('design_image')
+        
+        # Проверяем валидность статуса
+        if new_status in [choice[0] for choice in Application.STATUS_CHOICES]:
+            
+            # Проверка для "Принято в работу"
+            if new_status == 'in_progress' and not comment:
+                return redirect('main:application_detail', application_id=application_id)
+            
+            # Проверка для "Выполнено" 
+            if new_status == 'completed' and not design_image and not application.design_image:
+                return redirect('main:application_detail', application_id=application_id)
+            
+            # Обновляем данные
+            application.status = new_status
+            if comment:
+                application.comment = comment
+            if design_image:
+                application.design_image = design_image
+            application.save()
+    
+    return redirect('main:application_detail', application_id=application_id)

@@ -43,7 +43,11 @@
                 
                 </div>
                 <div class="panel-body" style="margin-top: 20px;">
-                    <a href="{% url 'main:profile' %}" class="btn btn-default">← Назад к списку</a>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'main:admin_applications' %}" class="btn btn-default">← Назад к списку</a>
+                    {% else %}
+                        <a href="{% url 'main:profile' %}" class="btn btn-default">← Назад к списку</a>
+                    {% endif %}
                 </div>
         
                     <div class="panel-body">
@@ -62,7 +66,67 @@
                     </form>
                     {% endif %}
                     </div>
-                
+
+                    
+                    <div class="panel-body">
+                     {% if application.comment %}
+                        <div class="comment-section">
+                            <label for="comment">Комментарий администратора:</label>
+                            <div class="comment-box">{{ application.comment }}</div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if application.design_image %}
+                        <div class="text-center">
+                            <h4>Дизайн:</h4>
+                            <img src="{{ application.design_image.url }}" alt="Дизайн заявки"
+                             class="img-thumbnail"
+                             style="max-width: 100%; max-height: 400px;">
+                        </div>
+                        {% endif %}
+
+                             
+                    {% if user.is_staff or user.is_superuser %}
+                    <div class="admin-actions mt-4">
+                        <h4>Действия администратора</h4>
+                        
+                        <form method="post" action="{% url 'main:update_application' application.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <label for="status">Статус:</label>
+                                <select name="status" id="status" class="form-control">
+                                    {% for status_value, status_name in application.STATUS_CHOICES %}
+                                    <option value="{{ status_value }}" 
+                                            {% if application.status == status_value %}selected{% endif %}>
+                                        {{ status_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="comment">Комментарий:</label>
+                                <textarea name="comment" id="comment" class="form-control" rows="3" 
+                                        placeholder="Введите комментарий при принятии в работу">{{ application.comment|default:'' }}</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="design_image">Изображение дизайна:</label>
+                                <input type="file" name="design_image" id="design_image" 
+                                    class="form-control-file" 
+                                    accept="image/*">
+                                {% if application.design_image %}
+                                <small>Текущее изображение: {{ application.design_image.name }}</small>
+                                {% endif %}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Обновить заявку</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                </div>
             </div>
         </div>
     </div>

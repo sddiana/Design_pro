@@ -51,22 +51,15 @@
                 <td>{{ application.category.name }}</td>
                 <td>{{ application.client.username }}</td>
                 <td>
-                    <form method="post" action="{% url 'main:change_status' application.id %}" style="margin: 0;">
-                        {% csrf_token %}
-                        <select name="status" class="form-control input-sm" onchange="this.form.submit()" style="display: inline-block; width: auto;">
-                            <option value="new" 
-                                    {% if application.status == 'new' %}selected{% endif %}
-                                    {% if application.status == 'in_progress' or application.status == 'completed' %}disabled{% endif %}>
-                                Новая
-                            </option>
-                            <option value="in_progress" {% if application.status == 'in_progress' %}selected{% endif %}>
-                                Принято в работу
-                            </option>
-                            <option value="completed" {% if application.status == 'completed' %}selected{% endif %}>
-                                Выполнено
-                            </option>
-                        </select>
-                    </form>
+                    
+                    {% if application.status == 'new' %}
+                        <span class="label label-primary">Новая</span>
+                    {% elif application.status == 'in_progress' %}
+                        <span class="label label-warning">Принято в работу</span>
+                    {% elif application.status == 'completed' %}
+                        <span class="label label-success">Выполнено</span>
+                    {% endif %}
+                
                 </td>
             </tr>
             {% endfor %}
