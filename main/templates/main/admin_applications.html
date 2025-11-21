@@ -39,7 +39,7 @@
             <tr>
                 <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
                 <td>
-                    <a href="{% url 'main:admin_application_detail' application.id %}" class="text-decoration-none">
+                    <a href="{% url 'main:application_detail' application.id %}" class="text-decoration-none">
                         {{ application.name }}
                     </a>
                 </td>

@@ -51,10 +51,7 @@ def create_application(request):
 
 @login_required
 def application_detail(request, application_id):
-    try:
-        application = Application.objects.get(id=application_id, client=request.user)
-    except Application.DoesNotExist:
-        return redirect('main:profile')
+    application = get_object_or_404(Application, id=application_id)
     
     return render(request, 'main/application_detail.html', {
         'application': application
@@ -145,10 +142,3 @@ def delete_application(request, application_id):
     
     return redirect('main:application_detail')
 
-@admin_required
-def admin_application_detail(request, application_id):
-    application = get_object_or_404(Application, id=application_id)
-    
-    return render(request, 'main/admin_application_detail.html', {
-        'application': application
-    })
