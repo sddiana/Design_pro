@@ -1,9 +1,9 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid" style="margin-top: 20px;">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2>{{ application.name }}</h2>
@@ -42,9 +42,27 @@
                     </div>
                 
                 </div>
-                <div style="margin-top: 20px;">
+                <div class="panel-body" style="margin-top: 20px;">
                     <a href="{% url 'main:profile' %}" class="btn btn-default">← Назад к списку</a>
                 </div>
+        
+                    <div class="panel-body">
+                    {% if application.status != 'new' %}
+                    <button type="button" class="btn btn-danger btn-sm" 
+                            onclick="alert('Нельзя удалить заявку, которая уже принята в работу или выполнена!')">
+                        Удалить
+                    </button>
+                    {% else %}
+                    <form method="post" action="{% url 'main:delete_application' application.id %}" 
+                        onsubmit="return confirm('Вы уверены, что хотите удалить заявку \'{{ application.name }}\'?\n\nЭто действие нельзя отменить!')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Удалить
+                        </button>
+                    </form>
+                    {% endif %}
+                    </div>
+                
             </div>
         </div>
     </div>

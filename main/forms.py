@@ -1,5 +1,6 @@
 from django import forms
 from .models import Application, Category
+
 class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application
@@ -39,8 +40,12 @@ class ApplicationStatusForm(forms.ModelForm):
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ['name', 'description']
+        fields = ['name']
         widgets = {
-            'name': forms.TextInput(),
-            'description': forms.Textarea()
+            'name': forms.TextInput(attrs={
+                'placeholder': 'Введите название категории'
+            }),
+        }
+        labels = {
+            'name': 'Название категории',
         }

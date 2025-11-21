@@ -1,9 +1,10 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<div class="container-fluid">
-    <h1>Управление заявками</h1>
 
+<div class="container-fluid">
+    <h1>Управление заяками</h1>
+    
     <div style="margin-bottom: 20px;">
         <form method="get">
             <label>Статус: </label>
@@ -19,6 +20,7 @@
             {% endif %}
         </form>
     </div>
+
 
     {% if applications %}
     <table class="table table-bordered" style="width: 100%; table-layout: fixed;">
@@ -52,17 +54,19 @@
                     <form method="post" action="{% url 'main:change_status' application.id %}" style="margin: 0;">
                         {% csrf_token %}
                         <select name="status" class="form-control input-sm" onchange="this.form.submit()" style="display: inline-block; width: auto;">
-                            <option value="new" {% if application.status == 'new' %}selected{% endif %}>Новая</option>
-                            <option value="in_progress" {% if application.status == 'in_progress' %}selected{% endif %}>Принято в работу</option>
-                            <option value="completed" {% if application.status == 'completed' %}selected{% endif %}>Выполнено</option>
+                            <option value="new" 
+                                    {% if application.status == 'new' %}selected{% endif %}
+                                    {% if application.status == 'in_progress' or application.status == 'completed' %}disabled{% endif %}>
+                                Новая
+                            </option>
+                            <option value="in_progress" {% if application.status == 'in_progress' %}selected{% endif %}>
+                                Принято в работу
+                            </option>
+                            <option value="completed" {% if application.status == 'completed' %}selected{% endif %}>
+                                Выполнено
+                            </option>
                         </select>
                     </form>
-                    <small class="text-muted">
-                        {% if application.status == 'new' %}Новая
-                        {% elif application.status == 'in_progress' %}Принято в работу
-                        {% elif application.status == 'completed' %}Выполнено
-                        {% endif %}
-                    </small>
                 </td>
             </tr>
             {% endfor %}

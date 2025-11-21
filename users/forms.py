@@ -30,6 +30,21 @@ class RegisterUserForm(UserCreationForm):
             'username': 'Логин',
         }
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        
+        if not username:
+            raise ValidationError('Логин обязателен для заполнения.')
+        
+        pattern = r'^[a-zA-Z\-]+$'
+        if not re.match(pattern, username):
+            raise ValidationError('Логин должен содержать только латинские буквы и дефис.')
+        
+        if User.objects.filter(username=username).exists():
+            raise ValidationError('Пользователь с таким логином уже существует.')
+        
+        return username
+
     def clean_full_name(self):
             full_name = self.cleaned_data.get('full_name')
             if not full_name:
