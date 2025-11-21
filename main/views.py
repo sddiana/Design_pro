@@ -145,3 +145,10 @@ def delete_application(request, application_id):
     
     return redirect('main:application_detail')
 
+@admin_required
+def admin_application_detail(request, application_id):
+    application = get_object_or_404(Application, id=application_id)
+    
+    return render(request, 'main/admin_application_detail.html', {
+        'application': application
+    })

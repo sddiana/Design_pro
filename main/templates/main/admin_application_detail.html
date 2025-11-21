@@ -1,0 +1,70 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 20px;">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2>{{ application.name }}</h2>
+                    <span class="label 
+                        {% if application.status == 'new' %}label-primary
+                        {% elif application.status == 'in_progress' %}label-warning
+                        {% elif application.status == 'completed' %}label-success
+                        {% else %}label-default{% endif %}">
+                        {{ application.get_status_display }}
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Описание:</strong></p>
+                    <p>{{ application.description|linebreaks }}</p>
+                    
+                    <p><strong>Категория:</strong> {{ application.category.name }}</p>
+                    <p><strong>Дата создания:</strong> {{ application.created_at|date:"d.m.Y H:i" }}</p>
+                    
+                    
+                    <div class="text-center">
+                        <h4>План помещения</h4>
+                        {% if application.floor_plan %}
+                            <img src="{{ application.floor_plan.url }}" 
+                                 alt="План помещения" 
+                                 class="img-thumbnail"
+                                 style="max-width: 100%; max-height: 400px;">
+                            <br><br>
+                            <a href="{{ application.floor_plan.url }}" 
+                               target="_blank" 
+                               class="btn btn-default">
+                                Открыть в полном размере
+                            </a>
+                        {% else %}
+                            <p class="text-muted">План помещения не загружен</p>
+                        {% endif %}
+                    </div>
+                
+                </div>
+                <div class="panel-body" style="margin-top: 20px;">
+                    <a href="{% url 'main:profile' %}" class="btn btn-default">← Назад к списку</a>
+                </div>
+        
+                    <div class="panel-body">
+                    {% if application.status != 'new' %}
+                    <button type="button" class="btn btn-danger btn-sm" 
+                            onclick="alert('Нельзя удалить заявку, которая уже принята в работу или выполнена!')">
+                        Удалить
+                    </button>
+                    {% else %}
+                    <form method="post" action="{% url 'main:delete_application' application.id %}" 
+                        onsubmit="return confirm('Вы уверены, что хотите удалить заявку \'{{ application.name }}\'?\n\nЭто действие нельзя отменить!')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Удалить
+                        </button>
+                    </form>
+                    {% endif %}
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
