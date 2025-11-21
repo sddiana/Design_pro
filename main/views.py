@@ -150,24 +150,27 @@ def update_application(request, application_id):
         new_status = request.POST.get('status')
         comment = request.POST.get('comment', '').strip()
         design_image = request.FILES.get('design_image')
+
+        if application.status in ['in_progress', 'completed']:
+            return redirect('main:application_detail', application_id=application_id)
         
-        # Проверяем валидность статуса
         if new_status in [choice[0] for choice in Application.STATUS_CHOICES]:
             
-            # Проверка для "Принято в работу"
             if new_status == 'in_progress' and not comment:
                 return redirect('main:application_detail', application_id=application_id)
             
-            # Проверка для "Выполнено" 
             if new_status == 'completed' and not design_image and not application.design_image:
                 return redirect('main:application_detail', application_id=application_id)
             
-            # Обновляем данные
             application.status = new_status
             if comment:
                 application.comment = comment
             if design_image:
-                application.design_image = design_image
-            application.save()
+                allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp']
+            if design_image.content_type not in allowed_types:
+                design_image = None
+            max_size = 5 * 1024 * 1024  # 5MB в байтах
+            if design_image.size > max_size:
+                design_image = None
     
     return redirect('main:application_detail', application_id=application_id)
