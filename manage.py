@@ -7,6 +7,10 @@ import sys
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'design_pro.settings')
+
+    from django.core.management.commands.runserver import Command as Runserver
+    Runserver.default_port = "8089"
+    
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

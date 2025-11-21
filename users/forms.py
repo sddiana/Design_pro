@@ -7,7 +7,7 @@ import re
 
 class LoginUserForm(forms.Form):
     username = forms.CharField(label='Логин')
-    password = forms.CharField(label='Пароль',widget=forms.PasswordInput(attrs={}))
+    password = forms.CharField(label='Пароль',widget=forms.PasswordInput())
 
 class RegisterUserForm(UserCreationForm):
 
