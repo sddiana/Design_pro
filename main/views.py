@@ -163,9 +163,8 @@ def update_application(request, application_id):
         comment = request.POST.get('comment', '').strip()
         design_image = request.FILES.get('design_image')
 
-
-        if application.status in ['in_progress', 'completed']:
-            messages.error(request, 'Нельзя изменить статус у заявки в работе или выполненной')
+        if new_status == 'new' and application.status in ['in_progress', 'completed']:
+            return redirect('main:admin_applications')
         
         if new_status in [choice[0] for choice in Application.STATUS_CHOICES]:
             
@@ -185,9 +184,14 @@ def update_application(request, application_id):
             if design_image.content_type not in allowed_types:
                 return redirect('main:application_detail', application_id=application_id)
 
-            max_size = 5 * 1024 * 1024
+            max_size = 2 * 1024 * 1024
 
             if design_image.size > max_size:
                 design_image = None
+            
+            application.design_image = design_image
+
+            application.status = new_status
+            application.save()
     
     return redirect('main:application_detail', application_id=application_id)
