@@ -37,3 +37,5 @@ class RegisterUser(CreateView):
         response = super().form_valid(form)
         login(self.request, self.object) 
         return response
+    
+    
